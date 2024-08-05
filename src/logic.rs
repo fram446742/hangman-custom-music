@@ -1,9 +1,8 @@
-use termcolor::{Color, StandardStream};
+use termcolor::{StandardStream, Color};
 
 use crate::{
-    consts::{STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6},
-    tools::*,
-    Hangman,
+    consts::{STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6, Hangman},
+    tools::*, NUM_PLAYERS,
 };
 
 fn game_over(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
@@ -12,7 +11,7 @@ fn game_over(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
         &format!("{} {}", get_message(12), hangman.word),
         color,
     );
-    restart(stdout, color);
+    restart(stdout, color.clone());
 }
 
 fn game_finish(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
@@ -44,7 +43,9 @@ fn constructor(message: &str, hangman: &mut Hangman, stdout: &mut StandardStream
     );
 
     let stages = match hangman.initial_lives {
-        6 => vec![STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6],
+        6 => vec![
+            STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6,
+        ],
         4 => vec![STAGE_0, STAGE_2, STAGE_4, STAGE_5, STAGE_6],
         2 => vec![STAGE_0, STAGE_2, STAGE_6],
         1 => vec![STAGE_0, STAGE_6],
@@ -59,11 +60,11 @@ fn constructor(message: &str, hangman: &mut Hangman, stdout: &mut StandardStream
     print_colored_text(stdout, message, color);
 }
 
+// TODO implement 2 player mode
+#[allow(unreachable_code)]
 pub fn game(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
-    loop {
-        main_menu(stdout, color, hangman);
-        clear();
-
+    if *NUM_PLAYERS.lock().unwrap() == 2 {
+        unimplemented!();
         print_colored_text(stdout, &get_message(3), color);
         hangman.word = read_input().trim().to_uppercase();
 
@@ -72,35 +73,45 @@ pub fn game(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
         hangman.hidden_letter = "_ ".repeat(hangman.word.len());
 
         clear();
-        constructor(&get_message(7), hangman, stdout, color);
-
+    } else {
         loop {
-            let input = read_input().trim().chars().next();
-            if let Some(c) = input {
-                hangman.attempt = Some(c.to_uppercase().next().unwrap());
-            } else {
-                print_colored_text(stdout, &get_message(8), color);
-                continue;
-            }
+            main_menu(stdout, color, hangman);
+            clear();
 
-            if hangman.history.contains(&hangman.attempt.unwrap()) {
-                constructor(&get_message(9), hangman, stdout, color);
-            } else {
-                hangman.history.insert(hangman.attempt.unwrap());
-                if hangman.word.contains(hangman.attempt.unwrap()) {
-                    refresh_line(hangman, stdout, color);
+            hangman.word = get_word();
+
+            hangman.hidden_letter = "_ ".repeat(hangman.word.len());
+
+            constructor(&get_message(7), hangman, stdout, color);
+
+            loop {
+                let input = read_input().trim().chars().next();
+                if let Some(c) = input {
+                    hangman.attempt = Some(c.to_uppercase().next().unwrap());
                 } else {
-                    hangman.lives -= 1;
-                    constructor(&get_message(10), hangman, stdout, color);
+                    print_colored_text(stdout, &get_message(8), color);
+                    continue;
                 }
-            }
 
-            if hangman.lives == 0 {
-                game_over(hangman, stdout, color);
-                break;
-            } else if !hangman.hidden_letter.contains('_') {
-                game_finish(hangman, stdout, color);
-                break;
+                if hangman.history.contains(&hangman.attempt.unwrap()) {
+                    constructor(&get_message(9), hangman, stdout, color);
+                } else {
+                    hangman.history.insert(hangman.attempt.unwrap());
+                    if hangman.word.contains(hangman.attempt.unwrap()) {
+                        refresh_line(hangman, stdout, color);
+                    } else {
+                        hangman.lives -= 1;
+                        constructor(&get_message(10), hangman, stdout, color);
+                    }
+                }
+
+                if hangman.lives == 0 {
+                    game_over(hangman, stdout, color);
+                    break;
+                } else if !hangman.hidden_letter.contains('_') {
+                    game_finish(hangman, stdout, color);
+                    break;
+                }
             }
         }
     }

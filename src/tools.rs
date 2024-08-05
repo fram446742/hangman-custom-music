@@ -5,8 +5,8 @@ use std::io::{self, Write};
 use termcolor::{Color, ColorSpec, StandardStream, WriteColor};
 
 use crate::{
-    consts::{EASTEREGG, EASTEREGG2, INFO_DICT, INFO_DICTEN, RAINBOW_COLORS},
-    main, Hangman, COLOR, DICTIONARY, DIFFICULTY, LANGUAGE,
+    consts::{Hangman, EASTEREGG, EASTEREGG2, INFO_DICT, INFO_DICTEN, WORDS_DICT, WORDS_DICTEN},
+    main, COLOR, DICTIONARY, DIFFICULTY, LANGUAGE, NUM_PLAYERS,
 };
 
 pub fn read_input() -> String {
@@ -64,29 +64,52 @@ pub fn get_message(id: u8) -> &'static str {
     dic.get(&id).unwrap_or(&DEFAULT_MESSAGE)
 }
 
-fn set_color(new_color: Color) {
-    let mut color = COLOR.lock().unwrap();
-    *color = new_color;
-}
+// fn set_color(new_color: Color) {
+//     let mut color = COLOR.lock().unwrap();
+//     *color = new_color;
+// }
 
 pub fn get_color() -> Color {
     let color = COLOR.lock().unwrap();
     *color
 }
 
-pub fn random_color() -> Color {
-    let mut rng = rand::thread_rng();
-    let current_color = *COLOR.lock().unwrap();
-    let available_colors: Vec<Color> = RAINBOW_COLORS
-        .iter()
-        .filter(|&&c| c != current_color)
-        .cloned()
-        .collect();
+// pub fn random_color() -> Color {
+//     *RAINBOW_COLORS.choose(&mut rand::thread_rng()).unwrap()
+// }
 
-    available_colors.choose(&mut rng).unwrap_or(&Color::White).clone()
+// Conversión de HSL a RGB
+fn hsl_to_termcolor(h: f64, s: f64, l: f64) -> Color {
+    let c = (1.0 - (2.0 * l - 1.0).abs()) * s;
+    let x = c * (1.0 - ((h / 60.0) % 2.0 - 1.0).abs());
+    let m = l - c / 2.0;
+
+    let (r, g, b) = match h {
+        h if h < 60.0 => (c, x, 0.0),
+        h if h < 120.0 => (x, c, 0.0),
+        h if h < 180.0 => (0.0, c, x),
+        h if h < 240.0 => (0.0, x, c),
+        h if h < 300.0 => (x, 0.0, c),
+        _ => (c, 0.0, x),
+    };
+
+    let r = ((r + m) * 255.0).round() as u8;
+    let g = ((g + m) * 255.0).round() as u8;
+    let b = ((b + m) * 255.0).round() as u8;
+
+    // Retornar un color de `termcolor` a partir de los valores RGB
+    Color::Rgb(r, g, b)
 }
 
+// Función para generar un color aleatorio y claro
+pub fn random_color() -> Color {
+    let mut rng = rand::thread_rng();
+    let hue = rng.gen_range(0.0..360.0); // Tono (0 a 360 grados)
+    let saturation = rng.gen_range(0.5..1.0); // Saturación (0.5 a 1.0 para colores vibrantes)
+    let lightness = rng.gen_range(0.5..0.9); // Luminosidad (0.5 a 0.9 para evitar colores oscuros)
 
+    hsl_to_termcolor(hue, saturation, lightness)
+}
 
 fn set_difficulty(lives: u8) {
     let mut dif = DIFFICULTY.lock().unwrap();
@@ -140,21 +163,24 @@ fn config(stdout: &mut StandardStream, color: Color, hangman: &mut Hangman) {
     let input = read_input().trim().to_uppercase();
     match input.as_str() {
         "1" => {
-            set_color(random_color());
-            config(stdout, color, hangman);
+            config(stdout, change_color(), hangman);
         }
         "2" => {
-            set_language(stdout, color);
+            set_players(stdout, color);
             config(stdout, color, hangman);
         }
         "3" => {
+            set_language(stdout, color);
+            config(stdout, color, hangman);
+        }
+        "4" => {
             select_difficulty(hangman, stdout, color);
             config(stdout, color, hangman);
         }
         "EASTEREGG" => {
             hid(stdout, color);
         }
-        "4" | _ => {
+        "5" | _ => {
             clear();
             main();
         }
@@ -209,4 +235,44 @@ pub fn hid(stdout: &mut StandardStream, color: Color) {
         read_input();
     }
     main();
+}
+
+fn set_players(stdout: &mut StandardStream, color: Color) {
+    clear();
+    print_colored_text(stdout, get_message(28), color);
+    loop {
+        let input = read_input().trim().to_uppercase();
+        match input.as_str() {
+            "1" => {
+                *NUM_PLAYERS.lock().unwrap() = 1;
+                break;
+            }
+            "2" => {
+                *NUM_PLAYERS.lock().unwrap() = 2;
+                break;
+            }
+            _ => {
+                print_colored_text(stdout, get_message(16), color);
+            }
+        }
+    }
+}
+
+pub fn get_word() -> String {
+    let dic: Vec<&'static str>;
+    if !*LANGUAGE.lock().unwrap() {
+        dic = WORDS_DICT.iter().cloned().collect();
+    } else {
+        dic = WORDS_DICTEN.iter().cloned().collect();
+    };
+
+    let word = dic.choose(&mut rand::thread_rng()).unwrap().to_uppercase();
+    word
+}
+
+fn change_color() -> Color {
+    let new_color = random_color();
+    let mut color = COLOR.lock().unwrap();
+    *color = new_color;
+    new_color
 }

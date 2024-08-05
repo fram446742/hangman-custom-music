@@ -1,4 +1,4 @@
-use consts::INFO_DICT;
+use consts::{Hangman, INFO_DICT};
 use lazy_static::lazy_static;
 use logic::game;
 use std::collections::{HashMap, HashSet};
@@ -9,22 +9,13 @@ mod consts;
 mod logic;
 mod tools;
 
-pub struct Hangman {
-    history: HashSet<char>,
-    word: String,
-    hidden_letter: String,
-    attempt: Option<char>,
-    lives: u8,
-    initial_lives: u8,
-}
-
 lazy_static! {
     pub static ref COLOR: Mutex<Color> = Mutex::new(random_color());
-    pub static ref COLOR2: Mutex<Color> = Mutex::new(random_color());
     pub static ref LANGUAGE: Mutex<bool> = Mutex::new(false);
     pub static ref DICTIONARY: Mutex<HashMap<u8, &'static str>> =
         Mutex::new(INFO_DICT.iter().cloned().collect());
     pub static ref DIFFICULTY: Mutex<u8> = Mutex::new(4);
+    pub static ref NUM_PLAYERS: Mutex<u8> = Mutex::new(1);
 }
 
 fn main() {

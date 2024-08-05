@@ -1,4 +1,4 @@
-use termcolor::Color;
+use std::collections::HashSet;
 
 pub const EASTEREGG: &str = "
                                             :
@@ -140,15 +140,15 @@ pub const STAGE_0: &str = "
 =========
 ";
 
-pub const RAINBOW_COLORS: [Color; 7] = [
-    Color::Red,
-    Color::Green,
-    Color::Yellow,
-    Color::Blue,
-    Color::Magenta,
-    Color::Cyan,
-    Color::White,
-];
+#[derive(Debug, Clone)]
+pub struct Hangman {
+  pub history: HashSet<char>,
+  pub word: String,
+  pub hidden_letter: String,
+  pub attempt: Option<char>,
+  pub lives: u8,
+  pub initial_lives: u8,
+}
 
 pub const INFO_DICT: &'static [(u8, &'static str)] = &[
     (1, "Presione Enter para iniciar el juego, T para ver las instrucciones, o C para entrar en los ajustes..."),
@@ -202,10 +202,11 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 (24, "
 ************************************************************************
 *                                 Ajustes:                             *
-* - Presiona 1 para cambiar el numero de jugadores.                    *
-* - Presiona 2 para cambiar el idioma.                                 *
-* - Presiona 3 para cambiar la dificultad.                             *
-* - Presiona 4 para para volver al menu principal.                     *
+* - Presiona 1 para cambiar el color.                                  *
+* - Presiona 2 para cambiar el numero de jugadores.                    *
+* - Presiona 3 para cambiar el idioma.                                 *
+* - Presiona 4 para cambiar la dificultad.                             *
+* - Presiona 5 para para volver al menu principal.                     *
 * - En construcción.                                                   *
 ************************************************************************
 "),
@@ -233,7 +234,7 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 ************************************************************************
 *                                Jugadores:                            *
 * 1  Un solo jugador.                                                  *
-* 2  2 Jugadores.                                                      *
+* 2  2 Jugadores (no implementado).                                    *
 ************************************************************************
 "),
 (29, "Por favor elige el número de jugadores")];
@@ -304,10 +305,11 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
         "
 ************************************************************************
 *                                Settings:                             *
-* - Press 1 to change the number of players.                           *
-* - Press 2 to change the language.                                    *
-* - Press 3 to change the difficulty.                                  *
-* - Press 4 to return to the main menu.                                *
+* - Press 1 to change the color.                                       *
+* - Press 2 to change the number of players.                           *
+* - Press 3 to change the language.                                    *
+* - Press 4 to change the difficulty.                                  *
+* - Press 5 to return to the main menu.                                *
 * - Under construction.                                                *
 ************************************************************************
 ",
@@ -347,9 +349,57 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
     ************************************************************************
     *                                Players:                              *
     * 1  Single player.                                                    *
-    * 2  2 Players.                                                        *
+    * 2  2 Players (not implemented).                                      *
     ************************************************************************
     ",
     ),
     (29, "Please choose the number of players")
+];
+
+pub const WORDS_DICT: &'static [&str] = &[
+    "amor", "felicidad", "luz", "montaña", "estrella",
+    "corazon", "viento", "sol", "libertad", "cielo",
+    "esperanza", "fuerza", "paz", "union", "misterio",
+    "infinito", "noche", "mar", "eternidad", "fuego",
+    "raiz", "jardin", "palabra", "nieve", "futuro",
+    "pasado", "presente", "alma", "mente", "cuerpo",
+    "fruta", "puente", "camino", "tristeza", "alegria",
+    "luna", "risa", "magia", "fantasia", "realidad",
+    "sueño", "brillante", "oro", "silencio", "musica",
+    "ruido", "amistad", "trabajo", "familia", "vida",
+    "arbol", "rio", "montana", "casa", "libro",
+    "juego", "arte", "ciencia", "historia", "misterio",
+    "aventura", "tierra", "futuro", "pasado", "cultura",
+    "naturaleza", "planeta", "galaxia", "universo", "ciudad",
+    "pueblo", "bosque", "mariposa", "flor", "lluvia",
+    "nube", "sol", "noche", "dia", "relampago",
+    "tormenta", "verano", "invierno", "primavera", "otoño",
+    "fresco", "calor", "frio", "neblina", "nieve",
+    "granizo", "tempestad", "brisa", "huracan", "ciclon",
+    "terremoto", "volcan", "desierto", "playa", "isla",
+    "oceano", "mar", "lago", "rio", "fuente"
+];
+
+pub const WORDS_DICTEN: &'static [&str] = &[
+    "love", "happiness", "light", "mountain", "star",
+    "heart", "wind", "sun", "freedom", "sky",
+    "hope", "strength", "peace", "union", "mystery",
+    "infinite", "night", "sea", "eternity", "fire",
+    "root", "garden", "word", "snow", "future",
+    "past", "present", "soul", "mind", "body",
+    "fruit", "bridge", "path", "sadness", "joy",
+    "moon", "laughter", "magic", "fantasy", "reality",
+    "dream", "bright", "gold", "silence", "music",
+    "noise", "friendship", "work", "family", "life",
+    "tree", "river", "mountain", "house", "book",
+    "game", "art", "science", "history", "mystery",
+    "adventure", "earth", "future", "past", "culture",
+    "nature", "planet", "galaxy", "universe", "city",
+    "town", "forest", "butterfly", "flower", "rain",
+    "cloud", "sun", "night", "day", "lightning",
+    "storm", "summer", "winter", "spring", "autumn",
+    "cool", "heat", "cold", "fog", "snow",
+    "hail", "tempest", "breeze", "hurricane", "cyclone",
+    "earthquake", "volcano", "desert", "beach", "island",
+    "ocean", "sea", "lake", "river", "fountain"
 ];
