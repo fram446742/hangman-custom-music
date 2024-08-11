@@ -36,7 +36,7 @@ fn game_loop(music_player: MusicPlayer) {
         print_colored_text(&mut stdout, get_message(17), hangman.color);
         let input = read_input().trim().to_uppercase();
 
-        if input != "S" || input != "Y" {
+        if input != "S" && input != "Y" {
             break; // Exit the loop if the user does not want to restart
         }
     }

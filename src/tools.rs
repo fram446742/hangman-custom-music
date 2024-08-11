@@ -10,7 +10,6 @@ use termcolor::{Color, ColorSpec, StandardStream, WriteColor};
 use crate::{
     consts::{EASTEREGG, EASTEREGG2, INFO_DICT, INFO_DICTEN, WORDS_DICT, WORDS_DICTEN},
     hangman::Hangman,
-    main,
     player::MusicPlayer,
     DICTIONARY, DIFFICULTY, LANGUAGE, NUM_PLAYERS,
 };
@@ -179,30 +178,32 @@ fn config(stdout: &mut StandardStream, hangman: &mut Hangman, music_player: &Mus
             }
         }
     }
-    main_menu(stdout, hangman, music_player);
+    // main_menu(stdout, hangman, music_player);
 }
 
 pub fn main_menu(stdout: &mut StandardStream, hangman: &mut Hangman, music_player: &MusicPlayer) {
-    clear();
-    print_colored_text(stdout, get_message(22), hangman.color);
-    print_colored_text(stdout, get_message(1), hangman.color);
+    loop {
+        clear();
+        print_colored_text(stdout, get_message(22), hangman.color);
+        print_colored_text(stdout, get_message(1), hangman.color);
 
-    let input = read_input().trim().to_uppercase();
-    match input.as_str() {
-        "I" => {
-            clear();
-            print_colored_text(stdout, &get_message(23), hangman.color);
-            print_colored_text(stdout, &get_message(2), hangman.color);
-            read_input();
+        let input = read_input().trim().to_uppercase();
+        match input.as_str() {
+            "I" => {
+                clear();
+                print_colored_text(stdout, &get_message(23), hangman.color);
+                print_colored_text(stdout, &get_message(2), hangman.color);
+                read_input();
+            }
+            "S" | "A" => {
+                clear();
+                config(stdout, hangman, music_player);
+            }
+            "E" => {
+                exit(0);
+            }
+            _ => break,
         }
-        "S" | "A" => {
-            clear();
-            config(stdout, hangman, music_player);
-        }
-        "E" => {
-            exit(0);
-        }
-        _ => (),
     }
 }
 
@@ -223,24 +224,30 @@ pub fn check_word(hangman: &Hangman, stdout: &mut StandardStream) -> bool {
 pub fn hid(stdout: &mut StandardStream, color: Color) {
     print_colored_text(stdout, get_message(18), color);
     let pass = read_pass();
-    match pass == "HIDDEN" || pass == "hidden" || pass == "Hidden" || pass == "OCULTO" || pass == "oculto" || pass == "Oculto" {
+    match pass == "HIDDEN"
+        || pass == "hidden"
+        || pass == "Hidden"
+        || pass == "OCULTO"
+        || pass == "oculto"
+        || pass == "Oculto"
+    {
         true => {
             print_colored_text(stdout, get_message(19), color);
             print_colored_text(stdout, get_message(6), color);
             print_colored_text(stdout, EASTEREGG, color);
             print_colored_text(stdout, get_message(21), color);
             read_input();
-            if rand::thread_rng().gen_range(0..11) == 5 {
+            if rand::thread_rng().gen_range(0..=5) == 5 {
                 print_colored_text(stdout, EASTEREGG2, color);
                 print_colored_text(stdout, get_message(27), color);
                 read_input();
             }
         }
         false => {
-                    print_colored_text(stdout, get_message(20), color);
-                    print_colored_text(stdout, get_message(21), color);
-                    read_input();
-                }
+            print_colored_text(stdout, get_message(20), color);
+            print_colored_text(stdout, get_message(21), color);
+            read_input();
+        }
     }
 }
 
