@@ -242,7 +242,6 @@ pub fn hid(stdout: &mut StandardStream, color: Color) {
                     read_input();
                 }
     }
-    main();
 }
 
 fn set_players(stdout: &mut StandardStream, color: Color) {
