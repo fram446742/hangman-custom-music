@@ -24,7 +24,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/hangman-game.git
+git clone https://github.com/fram446742/hangman-custom-music.git
 cd hangman-game
 ```
 
