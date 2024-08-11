@@ -1,12 +1,18 @@
 use rand::seq::SliceRandom;
 use rand::Rng;
 use rpassword::read_password;
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    process::exit,
+};
 use termcolor::{Color, ColorSpec, StandardStream, WriteColor};
 
 use crate::{
-    consts::{Hangman, EASTEREGG, EASTEREGG2, INFO_DICT, INFO_DICTEN, WORDS_DICT, WORDS_DICTEN},
-    main, COLOR, DICTIONARY, DIFFICULTY, LANGUAGE, NUM_PLAYERS,
+    consts::{EASTEREGG, EASTEREGG2, INFO_DICT, INFO_DICTEN, WORDS_DICT, WORDS_DICTEN},
+    hangman::Hangman,
+    main,
+    player::MusicPlayer,
+    DICTIONARY, DIFFICULTY, LANGUAGE, NUM_PLAYERS,
 };
 
 pub fn read_input() -> String {
@@ -17,6 +23,17 @@ pub fn read_input() -> String {
     });
 
     input
+}
+
+pub fn read_char() -> Option<char> {
+    let mut input = String::new();
+    if io::stdin().read_line(&mut input).is_ok() {
+        // Trim whitespace and check if there is at least one character
+        input.trim().chars().next()
+    } else {
+        eprintln!("Failed to read input");
+        None
+    }
 }
 
 fn read_pass() -> String {
@@ -64,18 +81,10 @@ pub fn get_message(id: u8) -> &'static str {
     dic.get(&id).unwrap_or(&DEFAULT_MESSAGE)
 }
 
-// fn set_color(new_color: Color) {
-//     let mut color = COLOR.lock().unwrap();
-//     *color = new_color;
-// }
-
-pub fn get_color() -> Color {
-    let color = COLOR.lock().unwrap();
-    *color
-}
-
-// pub fn random_color() -> Color {
-//     *RAINBOW_COLORS.choose(&mut rand::thread_rng()).unwrap()
+// #[allow(dead_code)]
+// pub fn get_color() -> Color {
+//     let color = COLOR.lock().unwrap();
+//     *color
 // }
 
 // Conversión de HSL a RGB
@@ -97,11 +106,9 @@ fn hsl_to_termcolor(h: f64, s: f64, l: f64) -> Color {
     let g = ((g + m) * 255.0).round() as u8;
     let b = ((b + m) * 255.0).round() as u8;
 
-    // Retornar un color de `termcolor` a partir de los valores RGB
     Color::Rgb(r, g, b)
 }
 
-// Función para generar un color aleatorio y claro
 pub fn random_color() -> Color {
     let mut rng = rand::thread_rng();
     let hue = rng.gen_range(0.0..360.0); // Tono (0 a 360 grados)
@@ -121,97 +128,97 @@ pub fn get_difficulty() -> u8 {
     *dif
 }
 
-fn select_difficulty(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
+fn select_difficulty(hangman: &mut Hangman, stdout: &mut StandardStream) {
     clear();
-    print_colored_text(stdout, get_message(26), color);
+    print_colored_text(stdout, get_message(26), hangman.color);
     loop {
-        let input = read_input();
-        match input.trim() {
-            "1" | "2" | "3" | "4" => {
-                let lives = match input.trim() {
-                    "1" => 6,
-                    "2" => 4,
-                    "3" => 2,
-                    "4" => 1,
-                    _ => unreachable!(),
-                };
-                hangman.lives = lives;
-                hangman.initial_lives = lives;
-                set_difficulty(lives);
+        let read = read_input();
+        let input = read.trim();
+        let lives = match input {
+            "1" => 6,
+            "2" => 4,
+            "3" => 2,
+            "4" => 1,
+            _ => {
+                print_colored_text(stdout, get_message(16), hangman.color);
+                continue;
+            }
+        };
+        hangman.lives = lives;
+        hangman.initial_lives = lives;
+        set_difficulty(lives);
+        break;
+    }
+}
+
+fn config(stdout: &mut StandardStream, hangman: &mut Hangman, music_player: &MusicPlayer) {
+    loop {
+        clear();
+        print_colored_text(stdout, get_message(24), hangman.color);
+        let input = read_input().trim().to_uppercase();
+        match input.as_str() {
+            "1" => {
+                hangman.color = random_color();
+            }
+            "2" => {
+                music_player.toggle_music();
+            }
+            "3" => {
+                set_players(stdout, hangman.color);
+            }
+            "4" => {
+                set_language(stdout, hangman.color);
+                hangman.change_word(get_word());
+            }
+            "5" => {
+                select_difficulty(hangman, stdout);
+            }
+            "EASTEREGG" => {
+                hid(stdout, hangman.color);
+            }
+            "6" | _ => {
+                // clear();
                 break;
             }
-            _ => {
-                print_colored_text(stdout, get_message(16), color);
-            }
         }
     }
+    main_menu(stdout, hangman, music_player);
 }
 
-pub fn restart(stdout: &mut StandardStream, color: Color) {
-    print_colored_text(stdout, get_message(17), color);
-    let input = read_input().trim().to_uppercase();
-    if input == "S" {
-        main();
-    } else {
-        std::process::exit(0);
-    }
-}
-
-fn config(stdout: &mut StandardStream, color: Color, hangman: &mut Hangman) {
+pub fn main_menu(stdout: &mut StandardStream, hangman: &mut Hangman, music_player: &MusicPlayer) {
     clear();
-    print_colored_text(stdout, get_message(24), color);
+    print_colored_text(stdout, get_message(22), hangman.color);
+    print_colored_text(stdout, get_message(1), hangman.color);
+
     let input = read_input().trim().to_uppercase();
     match input.as_str() {
-        "1" => {
-            config(stdout, change_color(), hangman);
-        }
-        "2" => {
-            set_players(stdout, color);
-            config(stdout, color, hangman);
-        }
-        "3" => {
-            set_language(stdout, color);
-            config(stdout, color, hangman);
-        }
-        "4" => {
-            select_difficulty(hangman, stdout, color);
-            config(stdout, color, hangman);
-        }
-        "EASTEREGG" => {
-            hid(stdout, color);
-        }
-        "5" | _ => {
+        "I" => {
             clear();
-            main();
+            print_colored_text(stdout, &get_message(23), hangman.color);
+            print_colored_text(stdout, &get_message(2), hangman.color);
+            read_input();
         }
+        "S" | "A" => {
+            clear();
+            config(stdout, hangman, music_player);
+        }
+        "E" => {
+            exit(0);
+        }
+        _ => (),
     }
 }
 
-pub fn main_menu(stdout: &mut StandardStream, color: Color, hangman: &mut Hangman) {
-    clear();
-    print_colored_text(stdout, get_message(22), color);
-    print_colored_text(stdout, get_message(1), color);
-
-    let input = read_input();
-    if input.trim().to_uppercase() == "T" {
-        clear();
-        print_colored_text(stdout, &get_message(23), color);
-        print_colored_text(stdout, &get_message(2), color);
-        read_input();
-        main();
-    } else if input.trim().to_uppercase() == "C" {
-        clear();
-        config(stdout, color, hangman);
-    }
-}
-
-pub fn check_word(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
+#[allow(dead_code)]
+pub fn check_word(hangman: &Hangman, stdout: &mut StandardStream) -> bool {
     if hangman.word.len() < 2 {
-        print_colored_text(stdout, get_message(4), color);
-        restart(stdout, color);
+        print_colored_text(stdout, get_message(4), hangman.color);
+        false
     } else if hangman.word.len() > 15 {
-        print_colored_text(stdout, get_message(5), color);
-        restart(stdout, color);
+        print_colored_text(stdout, get_message(5), hangman.color);
+        false
+    } else {
+        true
     }
 }
 
@@ -260,7 +267,8 @@ fn set_players(stdout: &mut StandardStream, color: Color) {
 
 pub fn get_word() -> String {
     let dic: Vec<&'static str>;
-    if !*LANGUAGE.lock().unwrap() {
+    let lan = *LANGUAGE.lock().unwrap();
+    if !lan {
         dic = WORDS_DICT.iter().cloned().collect();
     } else {
         dic = WORDS_DICTEN.iter().cloned().collect();
@@ -270,9 +278,9 @@ pub fn get_word() -> String {
     word
 }
 
-fn change_color() -> Color {
-    let new_color = random_color();
-    let mut color = COLOR.lock().unwrap();
-    *color = new_color;
-    new_color
-}
+// fn change_color() -> Color {
+//     let new_color = random_color();
+//     // let mut _color = hangman.color;
+//     // _color = new_color;
+//     new_color
+// }

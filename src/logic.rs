@@ -1,118 +1,79 @@
-use termcolor::{StandardStream, Color};
+use crate::{hangman::Hangman, player::MusicPlayer, tools::*};
+use termcolor::StandardStream;
 
-use crate::{
-    consts::{STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6, Hangman},
-    tools::*, NUM_PLAYERS,
-};
-
-fn game_over(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
+fn game_over(hangman: &Hangman, stdout: &mut StandardStream) {
     print_colored_text(
         stdout,
         &format!("{} {}", get_message(12), hangman.word),
-        color,
+        hangman.color,
     );
-    restart(stdout, color.clone());
+    // Optionally, restart(stdout, hangman.color);
 }
 
-fn game_finish(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
+fn game_finish(hangman: &Hangman, stdout: &mut StandardStream) {
     print_colored_text(
         stdout,
         &format!("{} {}", get_message(13), hangman.word),
-        color,
+        hangman.color,
     );
-    restart(stdout, color);
+    // Optionally, restart(stdout, hangman.color);
 }
 
-fn refresh_line(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
-    let mut hidden_letter_vec: Vec<char> = hangman.hidden_letter.chars().collect();
-    for (i, letter) in hangman.word.chars().enumerate() {
-        if letter == hangman.attempt.unwrap() {
-            hidden_letter_vec[i * 2] = letter;
-        }
-    }
-    hangman.hidden_letter = hidden_letter_vec.iter().collect();
-    constructor(get_message(11), hangman, stdout, color);
-}
-
-fn constructor(message: &str, hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
+pub fn game(hangman: &mut Hangman, stdout: &mut StandardStream, music_player: &MusicPlayer) {
+    main_menu(stdout, hangman, music_player);
     clear();
-    print_colored_text(
-        stdout,
-        &format!("{} {}", get_message(14), hangman.lives),
-        color,
-    );
 
-    let stages = match hangman.initial_lives {
-        6 => vec![
-            STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6,
-        ],
-        4 => vec![STAGE_0, STAGE_2, STAGE_4, STAGE_5, STAGE_6],
-        2 => vec![STAGE_0, STAGE_2, STAGE_6],
-        1 => vec![STAGE_0, STAGE_6],
-        _ => return, // Early return for invalid state
-    };
+    hangman.display(None);
 
-    if let Some(stage) = stages.get(hangman.lives as usize) {
-        print_colored_text(stdout, stage, color);
-    }
-
-    print_colored_text(stdout, &hangman.hidden_letter, color);
-    print_colored_text(stdout, message, color);
-}
-
-// TODO implement 2 player mode
-#[allow(unreachable_code)]
-pub fn game(hangman: &mut Hangman, stdout: &mut StandardStream, color: Color) {
-    if *NUM_PLAYERS.lock().unwrap() == 2 {
-        unimplemented!();
-        print_colored_text(stdout, &get_message(3), color);
-        hangman.word = read_input().trim().to_uppercase();
-
-        check_word(hangman, stdout, color);
-
-        hangman.hidden_letter = "_ ".repeat(hangman.word.len());
-
-        clear();
-    } else {
-        loop {
-            main_menu(stdout, color, hangman);
-            clear();
-
-            hangman.word = get_word();
-
-            hangman.hidden_letter = "_ ".repeat(hangman.word.len());
-
-            constructor(&get_message(7), hangman, stdout, color);
-
-            loop {
-                let input = read_input().trim().chars().next();
-                if let Some(c) = input {
-                    hangman.attempt = Some(c.to_uppercase().next().unwrap());
-                } else {
-                    print_colored_text(stdout, &get_message(8), color);
-                    continue;
-                }
-
-                if hangman.history.contains(&hangman.attempt.unwrap()) {
-                    constructor(&get_message(9), hangman, stdout, color);
-                } else {
-                    hangman.history.insert(hangman.attempt.unwrap());
-                    if hangman.word.contains(hangman.attempt.unwrap()) {
-                        refresh_line(hangman, stdout, color);
-                    } else {
-                        hangman.lives -= 1;
-                        constructor(&get_message(10), hangman, stdout, color);
-                    }
-                }
-
-                if hangman.lives == 0 {
-                    game_over(hangman, stdout, color);
-                    break;
-                } else if !hangman.hidden_letter.contains('_') {
-                    game_finish(hangman, stdout, color);
-                    break;
-                }
+    loop {
+        let input = read_char();
+        if let Some(c) = input {
+            let guess = c.to_uppercase().next().unwrap_or(c);
+            if hangman.guess(guess) {
+                hangman.display(Some(get_message(11)));
             }
+        } else {
+            print_colored_text(stdout, &get_message(8), hangman.color);
+            continue;
+        }
+
+        if hangman.is_lost() {
+            game_over(hangman, stdout);
+            break;
+        } else if hangman.is_won() {
+            game_finish(hangman, stdout);
+            break;
         }
     }
 }
+
+// pub fn game(stdout: &mut StandardStream) {
+
+//     let mut hangman = PLAYER1.lock().unwrap();
+
+//     main_menu(stdout, &mut hangman);
+//     clear();
+
+//     hangman.display(None);
+
+//     loop {
+//         let input = read_char();
+//         if let Some(c) = input {
+//             let guess = c.to_uppercase().next().unwrap_or(c);
+//             if hangman.guess(guess) {
+//                 hangman.display(Some(get_message(11)));
+//             }
+//         } else {
+//             print_colored_text(stdout, &get_message(8), hangman.color);
+//             continue;
+//         }
+
+//         if hangman.is_lost() {
+//             game_over(&mut hangman, stdout);
+//             break;
+//         } else if hangman.is_won() {
+//             game_finish(&mut hangman, stdout);
+//             break;
+//         }
+//     }
+// }

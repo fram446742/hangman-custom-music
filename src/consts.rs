@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 pub const EASTEREGG: &str = "
                                             :
                                            :::
@@ -140,18 +138,8 @@ pub const STAGE_0: &str = "
 =========
 ";
 
-#[derive(Debug, Clone)]
-pub struct Hangman {
-  pub history: HashSet<char>,
-  pub word: String,
-  pub hidden_letter: String,
-  pub attempt: Option<char>,
-  pub lives: u8,
-  pub initial_lives: u8,
-}
-
 pub const INFO_DICT: &'static [(u8, &'static str)] = &[
-    (1, "Presione Enter para iniciar el juego, T para ver las instrucciones, o C para entrar en los ajustes..."),
+    (1, "Presione Enter para iniciar el juego, I para ver las instrucciones, A para entrar en los ajustes o E para salir..."),
     (2, "Presione Enter para continuar..."),
     (3, "Ingrese la palabra a adivinar: "),
     (4, "La palabra debe tener al menos 2 letras."),
@@ -193,7 +181,7 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 *                                        Instrucciones:                                      *
 * 1. Debes adivinar la palabra oculta.                                                       *
 * 2. Tienes un número limitado de vidas (establecido en 4, puedes cambiarlo en ajustes).     *
-* 3. Cada vez que ingreses una letra incorrecta, perderás una vida.                          *
+* 3. Cada vez que ingreses una letra incorrecta, perderas una vida.                          *
 * 4. Si adivinas la palabra antes de quedarte sin vidas, ganas.                              *
 * 5. Si te quedas sin vidas, pierdes.                                                        *
 * 6. ¡Diviértete!                                                                            *
@@ -203,10 +191,11 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 ************************************************************************
 *                                 Ajustes:                             *
 * - Presiona 1 para cambiar el color.                                  *
-* - Presiona 2 para cambiar el numero de jugadores.                    *
-* - Presiona 3 para cambiar el idioma.                                 *
-* - Presiona 4 para cambiar la dificultad.                             *
-* - Presiona 5 para para volver al menu principal.                     *
+* - Presiona 2 para alternar la musica.                                *
+* - Presiona 3 para cambiar el numero de jugadores.                    *
+* - Presiona 4 para cambiar el idioma.                                 *
+* - Presiona 5 para cambiar la dificultad.                             *
+* - Presiona cualquier otra cosa para para volver al menu principal.   *
 * - En construcción.                                                   *
 ************************************************************************
 "),
@@ -222,9 +211,9 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 *                                 *
 *   Seleccione la dificultad:     *
 *                                 *
-*   1. Fácil (6 vidas)   (^o^)    *
+*   1. Facil (6 vidas)   (^o^)    *
 *   2. Medio (4 vidas)   (·_·')   *
-*   3. Difícil (2 vidas)  O_O     *
+*   3. Dificil (2 vidas)  O_O     *
 *   4. Imposible (1 vidas) x_x    *
 *                                 *
 **********************************
@@ -234,15 +223,17 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 ************************************************************************
 *                                Jugadores:                            *
 * 1  Un solo jugador.                                                  *
-* 2  2 Jugadores (no implementado).                                    *
+* 2  2 Jugadores (no implementado, rompera el juego).                  *
 ************************************************************************
 "),
-(29, "Por favor elige el número de jugadores")];
+(29, "Por favor elige el número de jugadores"),
+(30, "Palabra: "),
+(31, "Letras adivinadas: ")];
 
 pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
     (
         1,
-        "Press Enter to start the game, T to see the instructions, or C to enter the settings ...",
+        "Press Enter to start the game, I to see the instructions, S to enter the settings, or E to exit...",
     ),
     (2, "Press Enter to continue ..."),
     (3, "Enter the word to guess:"),
@@ -306,10 +297,11 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
 ************************************************************************
 *                                Settings:                             *
 * - Press 1 to change the color.                                       *
-* - Press 2 to change the number of players.                           *
-* - Press 3 to change the language.                                    *
-* - Press 4 to change the difficulty.                                  *
-* - Press 5 to return to the main menu.                                *
+* - Press 2 to toggle the music.                                       *
+* - Press 3 to change the number of players.                           *
+* - Press 4 to change the language.                                    *
+* - Press 5 to change the difficulty.                                  *
+* - Press anything else to return to the main menu.                    *
 * - Under construction.                                                *
 ************************************************************************
 ",
@@ -349,57 +341,227 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
     ************************************************************************
     *                                Players:                              *
     * 1  Single player.                                                    *
-    * 2  2 Players (not implemented).                                      *
+    * 2  2 Players (Not implemented, will break the game).                 *
     ************************************************************************
     ",
     ),
-    (29, "Please choose the number of players")
+    (29, "Please choose the number of players"),
+    (30, "Word: "),
+    (31, "Guessed letters: ")
 ];
 
 pub const WORDS_DICT: &'static [&str] = &[
-    "amor", "felicidad", "luz", "montaña", "estrella",
-    "corazon", "viento", "sol", "libertad", "cielo",
-    "esperanza", "fuerza", "paz", "union", "misterio",
-    "infinito", "noche", "mar", "eternidad", "fuego",
-    "raiz", "jardin", "palabra", "nieve", "futuro",
-    "pasado", "presente", "alma", "mente", "cuerpo",
-    "fruta", "puente", "camino", "tristeza", "alegria",
-    "luna", "risa", "magia", "fantasia", "realidad",
-    "sueño", "brillante", "oro", "silencio", "musica",
-    "ruido", "amistad", "trabajo", "familia", "vida",
-    "arbol", "rio", "montana", "casa", "libro",
-    "juego", "arte", "ciencia", "historia", "misterio",
-    "aventura", "tierra", "futuro", "pasado", "cultura",
-    "naturaleza", "planeta", "galaxia", "universo", "ciudad",
-    "pueblo", "bosque", "mariposa", "flor", "lluvia",
-    "nube", "sol", "noche", "dia", "relampago",
-    "tormenta", "verano", "invierno", "primavera", "otoño",
-    "fresco", "calor", "frio", "neblina", "nieve",
-    "granizo", "tempestad", "brisa", "huracan", "ciclon",
-    "terremoto", "volcan", "desierto", "playa", "isla",
-    "oceano", "mar", "lago", "rio", "fuente"
+    "amor",
+    "felicidad",
+    "luz",
+    "montaña",
+    "estrella",
+    "corazon",
+    "viento",
+    "sol",
+    "libertad",
+    "cielo",
+    "esperanza",
+    "fuerza",
+    "paz",
+    "union",
+    "misterio",
+    "infinito",
+    "noche",
+    "mar",
+    "eternidad",
+    "fuego",
+    "raiz",
+    "jardin",
+    "palabra",
+    "nieve",
+    "futuro",
+    "pasado",
+    "presente",
+    "alma",
+    "mente",
+    "cuerpo",
+    "fruta",
+    "puente",
+    "camino",
+    "tristeza",
+    "alegria",
+    "luna",
+    "risa",
+    "magia",
+    "fantasia",
+    "realidad",
+    "sueño",
+    "brillante",
+    "oro",
+    "silencio",
+    "musica",
+    "ruido",
+    "amistad",
+    "trabajo",
+    "familia",
+    "vida",
+    "arbol",
+    "rio",
+    "montana",
+    "casa",
+    "libro",
+    "juego",
+    "arte",
+    "ciencia",
+    "historia",
+    "misterio",
+    "aventura",
+    "tierra",
+    "futuro",
+    "pasado",
+    "cultura",
+    "naturaleza",
+    "planeta",
+    "galaxia",
+    "universo",
+    "ciudad",
+    "pueblo",
+    "bosque",
+    "mariposa",
+    "flor",
+    "lluvia",
+    "nube",
+    "sol",
+    "noche",
+    "dia",
+    "relampago",
+    "tormenta",
+    "verano",
+    "invierno",
+    "primavera",
+    "otoño",
+    "fresco",
+    "calor",
+    "frio",
+    "neblina",
+    "nieve",
+    "granizo",
+    "tempestad",
+    "brisa",
+    "huracan",
+    "ciclon",
+    "terremoto",
+    "volcan",
+    "desierto",
+    "playa",
+    "isla",
+    "oceano",
+    "mar",
+    "lago",
+    "rio",
+    "fuente",
 ];
 
 pub const WORDS_DICTEN: &'static [&str] = &[
-    "love", "happiness", "light", "mountain", "star",
-    "heart", "wind", "sun", "freedom", "sky",
-    "hope", "strength", "peace", "union", "mystery",
-    "infinite", "night", "sea", "eternity", "fire",
-    "root", "garden", "word", "snow", "future",
-    "past", "present", "soul", "mind", "body",
-    "fruit", "bridge", "path", "sadness", "joy",
-    "moon", "laughter", "magic", "fantasy", "reality",
-    "dream", "bright", "gold", "silence", "music",
-    "noise", "friendship", "work", "family", "life",
-    "tree", "river", "mountain", "house", "book",
-    "game", "art", "science", "history", "mystery",
-    "adventure", "earth", "future", "past", "culture",
-    "nature", "planet", "galaxy", "universe", "city",
-    "town", "forest", "butterfly", "flower", "rain",
-    "cloud", "sun", "night", "day", "lightning",
-    "storm", "summer", "winter", "spring", "autumn",
-    "cool", "heat", "cold", "fog", "snow",
-    "hail", "tempest", "breeze", "hurricane", "cyclone",
-    "earthquake", "volcano", "desert", "beach", "island",
-    "ocean", "sea", "lake", "river", "fountain"
+    "love",
+    "happiness",
+    "light",
+    "mountain",
+    "star",
+    "heart",
+    "wind",
+    "sun",
+    "freedom",
+    "sky",
+    "hope",
+    "strength",
+    "peace",
+    "union",
+    "mystery",
+    "infinite",
+    "night",
+    "sea",
+    "eternity",
+    "fire",
+    "root",
+    "garden",
+    "word",
+    "snow",
+    "future",
+    "past",
+    "present",
+    "soul",
+    "mind",
+    "body",
+    "fruit",
+    "bridge",
+    "path",
+    "sadness",
+    "joy",
+    "moon",
+    "laughter",
+    "magic",
+    "fantasy",
+    "reality",
+    "dream",
+    "bright",
+    "gold",
+    "silence",
+    "music",
+    "noise",
+    "friendship",
+    "work",
+    "family",
+    "life",
+    "tree",
+    "river",
+    "mountain",
+    "house",
+    "book",
+    "game",
+    "art",
+    "science",
+    "history",
+    "mystery",
+    "adventure",
+    "earth",
+    "future",
+    "past",
+    "culture",
+    "nature",
+    "planet",
+    "galaxy",
+    "universe",
+    "city",
+    "town",
+    "forest",
+    "butterfly",
+    "flower",
+    "rain",
+    "cloud",
+    "sun",
+    "night",
+    "day",
+    "lightning",
+    "storm",
+    "summer",
+    "winter",
+    "spring",
+    "autumn",
+    "cool",
+    "heat",
+    "cold",
+    "fog",
+    "snow",
+    "hail",
+    "tempest",
+    "breeze",
+    "hurricane",
+    "cyclone",
+    "earthquake",
+    "volcano",
+    "desert",
+    "beach",
+    "island",
+    "ocean",
+    "sea",
+    "lake",
+    "river",
+    "fountain",
 ];
