@@ -5,8 +5,6 @@ use std::thread::sleep;
 use std::{fs, thread::JoinHandle};
 use super_rodio::{self, Make, Player, SharedPlayer, Song};
 
-// use crate::SONGS;
-
 #[derive(Clone)]
 pub struct MusicPlayer {
     pub player: SharedPlayer,
@@ -24,7 +22,6 @@ impl MusicPlayer {
     }
     // Initialize the music player with shuffled songs from ./music
     pub fn init(&mut self) {
-        // Get the paths of the songs from the ./music directory
         let songs_dir = self.load_songs_from_directory("./music");
         if songs_dir.is_empty() {
             fs::create_dir_all("./music").expect("Failed to create music directory");
@@ -48,12 +45,7 @@ impl MusicPlayer {
             self.player.add(song);
         }
 
-        // self.initialized = true;
     }
-
-    // pub fn is_initialized(&self) -> bool {
-    //     self.initialized
-    // }
 
     // Load songs from a given directory
     fn load_songs_from_directory(&self, dir: &str) -> Vec<PathBuf> {
@@ -110,7 +102,7 @@ impl MusicPlayer {
         path: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let song = Song::from(filename.into(), path.into());
-        self.player.clear(); // Optional: Clear existing songs if needed
+        self.player.clear();
         self.player.add(song);
         self.player.use_auto_play();
         println!("Playing test song");

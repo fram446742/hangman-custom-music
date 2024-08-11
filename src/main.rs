@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::process::exit;
 use std::sync::Mutex;
 use {consts::INFO_DICT, hangman::Hangman, player::MusicPlayer};
-// use std::time::Duration;
 use termcolor::{ColorChoice, StandardStream};
 use tools::{clear, get_difficulty, get_message, get_word, print_colored_text, read_input};
 mod consts;
@@ -37,7 +36,7 @@ fn game_loop(music_player: MusicPlayer) {
         print_colored_text(&mut stdout, get_message(17), hangman.color);
         let input = read_input().trim().to_uppercase();
 
-        if input != "S" {
+        if input != "S" || input != "Y" {
             break; // Exit the loop if the user does not want to restart
         }
     }

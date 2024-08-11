@@ -28,7 +28,6 @@ pub fn read_input() -> String {
 pub fn read_char() -> Option<char> {
     let mut input = String::new();
     if io::stdin().read_line(&mut input).is_ok() {
-        // Trim whitespace and check if there is at least one character
         input.trim().chars().next()
     } else {
         eprintln!("Failed to read input");
@@ -60,11 +59,13 @@ fn set_language(stdout: &mut StandardStream, color: Color) {
     clear();
     print_colored_text(stdout, get_message(25), color);
     let lan = read_input().trim().to_uppercase();
+    // Sets the language to Spanish if the user types "1" and to English if the user types "2"
     let new_language = lan == "2";
 
     let mut lang = LANGUAGE.lock().unwrap();
     *lang = new_language;
 
+    // Update the dictionary with the new language
     let new_dict = if new_language {
         INFO_DICTEN.iter().cloned().collect()
     } else {
@@ -80,12 +81,6 @@ pub fn get_message(id: u8) -> &'static str {
     let dic = DICTIONARY.lock().unwrap();
     dic.get(&id).unwrap_or(&DEFAULT_MESSAGE)
 }
-
-// #[allow(dead_code)]
-// pub fn get_color() -> Color {
-//     let color = COLOR.lock().unwrap();
-//     *color
-// }
 
 // Conversión de HSL a RGB
 fn hsl_to_termcolor(h: f64, s: f64, l: f64) -> Color {
@@ -111,9 +106,9 @@ fn hsl_to_termcolor(h: f64, s: f64, l: f64) -> Color {
 
 pub fn random_color() -> Color {
     let mut rng = rand::thread_rng();
-    let hue = rng.gen_range(0.0..360.0); // Tono (0 a 360 grados)
-    let saturation = rng.gen_range(0.5..1.0); // Saturación (0.5 a 1.0 para colores vibrantes)
-    let lightness = rng.gen_range(0.5..0.9); // Luminosidad (0.5 a 0.9 para evitar colores oscuros)
+    let hue = rng.gen_range(0.0..360.0); // Tono
+    let saturation = rng.gen_range(0.5..1.0); // Saturación
+    let lightness = rng.gen_range(0.5..0.9); // Luminosidad
 
     hsl_to_termcolor(hue, saturation, lightness)
 }
@@ -134,6 +129,7 @@ fn select_difficulty(hangman: &mut Hangman, stdout: &mut StandardStream) {
     loop {
         let read = read_input();
         let input = read.trim();
+        // Check if the input is a number between 1 and 4 and set the lives accordingly
         let lives = match input {
             "1" => 6,
             "2" => 4,
@@ -156,6 +152,7 @@ fn config(stdout: &mut StandardStream, hangman: &mut Hangman, music_player: &Mus
         clear();
         print_colored_text(stdout, get_message(24), hangman.color);
         let input = read_input().trim().to_uppercase();
+        // Check the user input and call the corresponding function
         match input.as_str() {
             "1" => {
                 hangman.color = random_color();
@@ -211,6 +208,7 @@ pub fn main_menu(stdout: &mut StandardStream, hangman: &mut Hangman, music_playe
 
 #[allow(dead_code)]
 pub fn check_word(hangman: &Hangman, stdout: &mut StandardStream) -> bool {
+    // Checks if the word is valid
     if hangman.word.len() < 2 {
         print_colored_text(stdout, get_message(4), hangman.color);
         false
@@ -225,21 +223,24 @@ pub fn check_word(hangman: &Hangman, stdout: &mut StandardStream) -> bool {
 pub fn hid(stdout: &mut StandardStream, color: Color) {
     print_colored_text(stdout, get_message(18), color);
     let pass = read_pass();
-    if pass == "HIDDEN" {
-        print_colored_text(stdout, get_message(19), color);
-        print_colored_text(stdout, get_message(6), color);
-        print_colored_text(stdout, EASTEREGG, color);
-        print_colored_text(stdout, get_message(21), color);
-        read_input();
-        if rand::thread_rng().gen_range(0..11) == 5 {
-            print_colored_text(stdout, EASTEREGG2, color);
-            print_colored_text(stdout, get_message(27), color);
+    match pass == "HIDDEN" || pass == "hidden" || pass == "Hidden" || pass == "OCULTO" || pass == "oculto" || pass == "Oculto" {
+        true => {
+            print_colored_text(stdout, get_message(19), color);
+            print_colored_text(stdout, get_message(6), color);
+            print_colored_text(stdout, EASTEREGG, color);
+            print_colored_text(stdout, get_message(21), color);
             read_input();
+            if rand::thread_rng().gen_range(0..11) == 5 {
+                print_colored_text(stdout, EASTEREGG2, color);
+                print_colored_text(stdout, get_message(27), color);
+                read_input();
+            }
         }
-    } else {
-        print_colored_text(stdout, get_message(20), color);
-        print_colored_text(stdout, get_message(21), color);
-        read_input();
+        false => {
+                    print_colored_text(stdout, get_message(20), color);
+                    print_colored_text(stdout, get_message(21), color);
+                    read_input();
+                }
     }
     main();
 }
@@ -277,10 +278,3 @@ pub fn get_word() -> String {
     let word = dic.choose(&mut rand::thread_rng()).unwrap().to_uppercase();
     word
 }
-
-// fn change_color() -> Color {
-//     let new_color = random_color();
-//     // let mut _color = hangman.color;
-//     // _color = new_color;
-//     new_color
-// }

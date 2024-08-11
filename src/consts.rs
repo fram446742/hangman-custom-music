@@ -156,54 +156,78 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
     (15, "No se pudo leer la línea."),
     (16, "Por favor, seleccione una opción válida"),
     (17, "Desea volver a intentarlo? (s/n): "),
-    (18, "Inserte contraseña: "),
+    (18, "
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⢀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣤⣤⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢿⣿⣿⣿⣿⣿⣿⡿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⣀⣠⠀⣶⣤⣄⣉⣉⣉⣉⣠⣤⣶⠀⣄⣀⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣶⣾⣿⣿⣿⣿⣦⣄⣉⣙⣛⣛⣛⣛⣋⣉⣠⣴⣿⣿⣿⣿⣷⣶⠀⠀⠀
+⠀⠀⠀⠀⠈⠉⠉⠛⠛⠛⠻⠿⠿⠿⠿⠿⠿⠿⠿⠟⠛⠛⠛⠉⠉⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⣆⠀⠀⠀⢠⡄⠀⠀⠀⣰⣾⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⣠⣶⣾⣿⡆⠸⣿⣶⣶⣾⣿⣿⣷⣶⣶⣿⠇⢰⣿⣷⣶⣄⡀⠀⠀⠀
+⠀⠀⠺⠿⣿⣿⣿⣿⣿⣄⠙⢿⣿⣿⣿⣿⣿⣿⡿⠋⣠⣿⣿⣿⣿⣿⠿⠗⠀⠀
+⠀⠀⠀⠀⠀⠙⠻⣿⣿⣿⣷⡄⠈⠙⠛⠛⠋⠁⢠⣾⣿⣿⣿⠟⠋⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣀⣤⣬⣿⣿⣿⣇⠐⣿⣿⣿⣿⠂⣸⣿⣿⣿⣥⣤⣀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠘⠻⠿⠿⢿⣿⣿⣿⣧⠈⠿⠿⠁⣼⣿⣿⣿⡿⠿⠿⠟⠃⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢿⠀⣶⣦⠀⡿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    Inserte contraseña: "),
     (19, "Acceso concedido"),
     (20, "Acceso denegado"),
     (21, "Presione Enter para continuar...?"),
     (22, "
-**********************************
-*                                *
-*   ¡Bienvenido al juego del     *
-*           AHORCADO!            *
-*    _______                     *
-*    |/      |                   *
-*    |      (_)                  *
-*    |      \\|/                  *
-*    |       |                   *
-*    |      / \\                  *
-*    |                           *
-*   _|___                        *
-*                                *
-**********************************
+*******************************************************
+*                                                     *
+*              ¡BIENVENIDO AL JUEGO DEL               *
+*                      AHORCADO!                      *
+*                     ________                        *
+*                     |/      |                       *
+*                     |      (_)                      *
+*                     |      \\|/                      *
+*                     |       |                       *
+*                     |      / \\                      *
+*                     |                               *
+*                    _|___                            *
+*                                                     *
+*******************************************************
 "),
 (23, "
 **********************************************************************************************
-*                                        Instrucciones:                                      *
-* 1. Debes adivinar la palabra oculta.                                                       *
-* 2. Tienes un número limitado de vidas (establecido en 4, puedes cambiarlo en ajustes).     *
-* 3. Cada vez que ingreses una letra incorrecta, perderas una vida.                          *
-* 4. Si adivinas la palabra antes de quedarte sin vidas, ganas.                              *
-* 5. Si te quedas sin vidas, pierdes.                                                        *
-* 6. ¡Diviértete!                                                                            *
+*                                      Instrucciones:                                        *
+*                                                                                            *
+* - Debes adivinar la palabra oculta.                                                        *
+* - Tienes un número limitado de vidas (por defecto es 4, puedes cambiarlo en ajustes).      *
+* - Cada vez que ingreses una letra incorrecta, perderás una vida.                           *
+* - Si adivinas la palabra sin perder todas tus vidas, ¡felicidades!                         *
+* - Si te quedas sin vidas, pierdes.                                                         *
+* - ¡Diviértete!                                                                             *
+*                                                                                            *
+* El juego aún está en desarrollo, así que ignora cualquier error (^_^')                     *
+*                                                                                            *
+* Recuerda explorar todas las partes del juego, a veces hay sorpresas ocultas...             *
+* Como un 'easteregg'... esperando ser descubierto.                                          *
 **********************************************************************************************
 "),
 (24, "
-************************************************************************
-*                                 Ajustes:                             *
-* - Presiona 1 para cambiar el color.                                  *
-* - Presiona 2 para alternar la musica.                                *
-* - Presiona 3 para cambiar el numero de jugadores.                    *
-* - Presiona 4 para cambiar el idioma.                                 *
-* - Presiona 5 para cambiar la dificultad.                             *
-* - Presiona cualquier otra cosa para para volver al menu principal.   *
-* - En construcción.                                                   *
-************************************************************************
+**************************************************************************
+*                                 Ajustes:                               *
+*                                                                        *
+* - Presiona 1 para cambiar el color.                                    *
+* - Presiona 2 para alternar la musica.                                  *
+* - Presiona 3 para cambiar el numero de jugadores.                      *
+* - Presiona 4 para cambiar el idioma.                                   *
+* - Presiona 5 para cambiar la dificultad.                               *
+* - Presiona cualquier otra cosa para para volver al menu principal.     *
+* - Me parece que puede existir algo 'oculto' en alguna parte...         *
+**************************************************************************
 "),
 (25, "
 ************************************************************************
 *                                  Idioma:                             *
-* 1  Español.                                                          *
-* 2  English.                                                          *
+*                                                                      *
+* 1.  Español (ES).                                                    *
+* 2.  English (EN).                                                    *
 ************************************************************************
 "),
 (26, "
@@ -222,8 +246,9 @@ pub const INFO_DICT: &'static [(u8, &'static str)] = &[
 (28, "
 ************************************************************************
 *                                Jugadores:                            *
-* 1  Un solo jugador.                                                  *
-* 2  2 Jugadores (no implementado, rompera el juego).                  *
+*                                                                      *
+* 1.  Un solo jugador.                                                 *
+* 2.  2 Jugadores (no implementado, rompera el juego).                 *
 ************************************************************************
 "),
 (29, "Por favor elige el número de jugadores"),
@@ -253,57 +278,80 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
     (14, "Lives: "),
     (15, "The line could not be read."),
     (16, "Please select a valid option"),
-    (17, "Do you want to try again? (s/n): "),
-    (18, "Insert password:"),
+    (17, "Do you want to try again? (y/n): "),
+    (18, "
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⢀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣤⣤⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢿⣿⣿⣿⣿⣿⣿⡿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⣀⣠⠀⣶⣤⣄⣉⣉⣉⣉⣠⣤⣶⠀⣄⣀⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣶⣾⣿⣿⣿⣿⣦⣄⣉⣙⣛⣛⣛⣛⣋⣉⣠⣴⣿⣿⣿⣿⣷⣶⠀⠀⠀
+⠀⠀⠀⠀⠈⠉⠉⠛⠛⠛⠻⠿⠿⠿⠿⠿⠿⠿⠿⠟⠛⠛⠛⠉⠉⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⣆⠀⠀⠀⢠⡄⠀⠀⠀⣰⣾⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⣠⣶⣾⣿⡆⠸⣿⣶⣶⣾⣿⣿⣷⣶⣶⣿⠇⢰⣿⣷⣶⣄⡀⠀⠀⠀
+⠀⠀⠺⠿⣿⣿⣿⣿⣿⣄⠙⢿⣿⣿⣿⣿⣿⣿⡿⠋⣠⣿⣿⣿⣿⣿⠿⠗⠀⠀
+⠀⠀⠀⠀⠀⠙⠻⣿⣿⣿⣷⡄⠈⠙⠛⠛⠋⠁⢠⣾⣿⣿⣿⠟⠋⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣀⣤⣬⣿⣿⣿⣇⠐⣿⣿⣿⣿⠂⣸⣿⣿⣿⣥⣤⣀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠘⠻⠿⠿⢿⣿⣿⣿⣧⠈⠿⠿⠁⣼⣿⣿⣿⡿⠿⠿⠟⠃⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢿⠀⣶⣦⠀⡿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    Insert password:"),
     (19, "Access granted"),
     (20, "Access denied"),
     (21, "Press Enter to continue...?"),
     (
         22,
         "
-**********************************
-*                                *
-*     Welcome to the hangman     *
-*              game!             *
-*    _______                     *
-*    |/      |                   *
-*    |      (_)                  *
-*    |      \\|/                  *
-*    |       |                   *
-*    |      / \\                  *
-*    |                           *
-*   _|___                        *
-*                                *
-**********************************
+*******************************************************
+*                                                     *
+*                WELCOME TO THE HANGMAN               *
+*                        GAME!                        *
+*                     ________                        *
+*                     |/      |                       *
+*                     |      (_)                      *
+*                     |      \\|/                      *
+*                     |       |                       *
+*                     |      / \\                      *
+*                     |                               *
+*                    _|___                            *
+*                                                     *
+*******************************************************
 ",
     ),
     (
         23,
         "
-*****************************************************************************************
-*                                       Instructions:                                   *
-* 1. You must guess the hidden word.                                                    *
-* 2. You have a limited number of lives (laid on 4, you can change it in settings).     *
-* 3. Every time you enter an incorrect letter, you will lose a life.                    *
-* 4. If you guess the word without loosing all your lives, congrats.                    *
-* 5. If you run out of lives, you lose.                                                 *
-* 6. Have fun!                                                                          *
-*****************************************************************************************
+**********************************************************************************************
+*                                       Instructions:                                        *
+*                                                                                            *
+* - You must guess the hidden word.                                                          *
+* - You have a limited number of lives (default is 4, you can change it in settings).        *
+* - Every time you enter an incorrect letter, you will lose a life.                          *
+* - If you guess the word without losing all your lives, congrats!                           *
+* - If you run out of lives, you lose.                                                       *
+* - Have fun!                                                                                *
+*                                                                                            *
+* The game is still under development, so please ignore any bugs (^_^')                      *
+*                                                                                            *
+* Remember to explore all parts of the game, sometimes there are hidden surprises...         *
+* Like an 'easteregg'... just waiting to be found.                                           *
+**********************************************************************************************
 ",
     ),
     (
         24,
         "
-************************************************************************
-*                                Settings:                             *
-* - Press 1 to change the color.                                       *
-* - Press 2 to toggle the music.                                       *
-* - Press 3 to change the number of players.                           *
-* - Press 4 to change the language.                                    *
-* - Press 5 to change the difficulty.                                  *
-* - Press anything else to return to the main menu.                    *
-* - Under construction.                                                *
-************************************************************************
+**************************************************************************
+*                                 Settings:                              *
+*                                                                        *
+* - Press 1 to change the color.                                         *
+* - Press 2 to toggle the music.                                         *
+* - Press 3 to change the number of players.                             *
+* - Press 4 to change the language.                                      *
+* - Press 5 to change the difficulty.                                    *
+* - Press anything else to return to the main menu.                      *
+* - It seems to me that there may be something 'hidden' somewhere...     *
+**************************************************************************
 ",
     ),
     (
@@ -311,8 +359,9 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
         "
 ************************************************************************
 *                               Language:                              *
-* 1  Español (ES).                                                     *
-* 2  English (EN).                                                     *
+*                                                                      *
+* 1.  Español (ES).                                                    *
+* 2.  English (EN).                                                    *
 ************************************************************************
 ",
     ),
@@ -340,8 +389,9 @@ pub const INFO_DICTEN: &'static [(u8, &'static str)] = &[
         "
     ************************************************************************
     *                                Players:                              *
-    * 1  Single player.                                                    *
-    * 2  2 Players (Not implemented, will break the game).                 *
+    *                                                                      *
+    * 1.  Single player.                                                   *
+    * 2.  2 Players (Not implemented, will break the game).                *
     ************************************************************************
     ",
     ),
