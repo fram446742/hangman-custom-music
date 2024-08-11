@@ -16,9 +16,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Set up Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        override: true      
+        components: clippy, rustfmt  
+        profile: default
+    
     - name: Build
       run: cargo build
+
     - name: Run tests
       run: cargo test --verbose
+
     - name: Release
       run: cargo build --release
