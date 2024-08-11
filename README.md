@@ -61,8 +61,10 @@ Contributions are welcome! Feel free to submit a pull request or open an issue f
 
 ## License
 
-This project is licensed under the GNU License - see the [LICENSE] file for details.
+This project is licensed under the GNU License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
-Thanks to the Rust community and all the open-source projects that made this game possible. Also, there might be a little surprise hidden in the code – happy hunting!
+I would like to express my gratitude to the Rust community and all the open-source projects that made this game possible.
+
+Also, there might be a little surprise hidden in the code – happy hunting!
